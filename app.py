@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import time
 import requests
 import os
+import matplotlib.dates as mdates
 
 # Set ggplot style
 plt.style.use('ggplot')
@@ -29,16 +30,6 @@ def load_model(model_name):
         st.error(f"Error loading model {model_name}: {e}")
         return None
 
-# Function to preprocess the data from the uploaded file
-def preprocess_data(file):
-    try:
-        df = pd.read_excel(file)
-        st.write("File uploaded successfully.")
-        return df
-    except Exception as e:
-        st.error(f"Error processing file: {e}")
-        return None
-
 # URLs for the models
 cnn_model_url = 'https://github.com/patrickau-cloud/scu_st/raw/91415962c62be79a5ad893eb5e2e6df7e050c71f/cnn_rainfall_watercourse_model.h5'
 lstm_model_url = 'https://github.com/patrickau-cloud/scu_st/raw/91415962c62be79a5ad893eb5e2e6df7e050c71f/lstm_rainfall_watercourse_model.h5'
@@ -60,76 +51,80 @@ st.title('Rainfall to Watercourse Level Prediction')
 # Dropdown for model selection
 model_name = st.selectbox('Choose a model', (cnn_model_file, lstm_model_file))
 
-# File uploader for the Excel file
-uploaded_file = st.file_uploader('Upload your rainfall and watercourse data (xlsx format)', type='xlsx')
-
-if uploaded_file is not None:
+# Button to run the chart generation
+if st.button('Run Chart'):
     # Load the model
     model = load_model(model_name)
     
     if model:
-        # Preprocess the data
-        data = preprocess_data(uploaded_file)
+        # Example dataset (you should replace this with your actual dataset)
+        data = pd.DataFrame({
+            'MonthDay': pd.date_range(start='2015-04-01', end='2015-05-31'),
+            'SumRainfall': np.random.uniform(0, 200, size=61),
+            'DeltaWatercourseLevel': np.random.uniform(-0.5, 1.5, size=61)
+        })
         
-        if data is not None:
-            # Extract necessary columns
-            try:
-                dates = data['MonthDay']
-                rainfall = data['SumRainfall']
-                actual_levels = data['DeltaWatercourseLevel']
-            except KeyError as e:
-                st.error(f"Missing expected column in data: {e}")
-                st.stop()
-            
-            # Prepare input data for the model
-            input_data = rainfall.values.reshape(-1, 1)
-            input_data = np.expand_dims(input_data, axis=0)
-            
-            # Predict using the model and measure the running time
-            start_time = time.time()
-            try:
-                predicted_levels = model.predict(input_data).flatten()
-            except Exception as e:
-                st.error(f"Error making predictions: {e}")
-                st.stop()
-            
-            running_time = time.time() - start_time
-            
-            # Add the predicted levels to the data frame
-            data['PredictedDelta'] = predicted_levels
-            
-            # Plot the results
-            fig, ax1 = plt.subplots()
-            
-            # Plot the rainfall as bars
-            ax1.bar(dates, rainfall, color='b', alpha=0.6, label='Rainfall (mm)')
-            ax1.set_xlabel('Date')
-            ax1.set_ylabel('Rainfall (mm)', color='b')
-            ax1.tick_params(axis='y', labelcolor='b')
-            ax1.set_ylim(0, 240)  # Set the y-axis limit for rainfall
-            
-            # Create a second y-axis for the predicted delta watercourse level
-            ax2 = ax1.twinx()
-            ax2.plot(dates, predicted_levels, color='r', label='Predicted Delta Watercourse Level')
-            ax2.plot(dates, actual_levels, color='g', linestyle='--', label='Actual Delta Watercourse Level')
-            ax2.set_ylabel('Delta Watercourse Level (m)', color='r')
-            ax2.tick_params(axis='y', labelcolor='r')
-            ax2.set_ylim(-0.5, 1.9)  # Set the y-axis limit for watercourse level
-            
-            # Add legends
-            fig.legend(loc='upper left', bbox_to_anchor=(0.12, 0.88))
-            
-            # Rotate x-axis labels for better readability
-            plt.setp(ax1.get_xticklabels(), rotation=45, ha='right')
-            
-            # Title and show plot
-            plt.title('Rainfall and Predicted Delta Watercourse Level Nerang River at Glenhurst')
-            
-            st.pyplot(fig)
-            
-            # Display running time
-            st.write(f"Running time: {running_time:.4f} seconds")
-            
-            # Display data
-            st.write("### Data")
-            st.write(data)
+        # Prepare the input data (example: SumRainfall level of 8)
+        input_rainfall = np.array([[8]], dtype=np.float32)
+        input_rainfall_reshaped = input_rainfall.reshape((input_rainfall.shape[0], 1, input_rainfall.shape[1]))
+
+        # Make a prediction
+        start_time = time.time()
+        predicted = model.predict(input_rainfall_reshaped)
+        running_time = time.time() - start_time
+
+        st.write(f'Predicted Delta Watercourse Level: {predicted[0][0]}')
+
+        # Filter data for a specific period
+        start_date = '2015-04-25'
+        end_date = '2015-05-07'
+        mask = (data['MonthDay'] >= start_date) & (data['MonthDay'] <= end_date)
+        filtered_data = data.loc[mask]
+
+        # Prepare the input data for prediction
+        X = filtered_data[['SumRainfall']].values
+        X_reshaped = X.reshape((X.shape[0], 1, X.shape[1]))
+
+        # Predict the watercourse delta
+        predicted_deltas = model.predict(X_reshaped)
+
+        # Add the predictions to the dataframe
+        filtered_data['PredictedDelta'] = predicted_deltas
+
+        # Plot the results
+        fig, ax1 = plt.subplots()
+
+        # Plot the rainfall as bars
+        ax1.bar(filtered_data['MonthDay'], filtered_data['SumRainfall'], color='b', alpha=0.6, label='Rainfall (mm)')
+        ax1.set_xlabel('Date')
+        ax1.set_ylabel('Rainfall (mm)', color='b')
+        ax1.tick_params(axis='y', labelcolor='b')
+        ax1.set_ylim(0, 240)  # Set the y-axis limit for rainfall
+        ax1.grid(True)  # Enable grid for ax1
+
+        # Set the x-axis major locator to show every 2 days
+        ax1.xaxis.set_major_locator(mdates.DayLocator(interval=2))
+        ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+
+        # Create a second y-axis for the predicted delta watercourse level
+        ax2 = ax1.twinx()
+        ax2.plot(filtered_data['MonthDay'], filtered_data['PredictedDelta'], color='r', label='Predicted Delta Watercourse Level')
+        ax2.plot(filtered_data['MonthDay'], filtered_data['DeltaWatercourseLevel'], color='g', linestyle='--', label='Actual Delta Watercourse Level')
+        ax2.set_ylabel('Delta Watercourse Level (m)', color='r')
+        ax2.tick_params(axis='y', labelcolor='r')
+        ax2.grid(False)  # Disable grid for ax2
+
+        # Add legends
+        fig.legend(loc='upper left', bbox_to_anchor=(0.1, 0.9))
+
+        # Rotate x-axis labels for better readability
+        plt.setp(ax1.get_xticklabels(), rotation=45, ha='right')
+
+        # Title and show plot
+        plt.title('Rainfall and Predicted Delta Watercourse Level (2015-04-25 to 2015-05-07)')
+        plt.tight_layout()
+
+        st.pyplot(fig)
+        
+        # Display running time
+        st.write(f"Running time: {running_time:.4f} seconds")
