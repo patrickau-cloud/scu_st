@@ -48,6 +48,21 @@ if not os.path.exists(lstm_model_file):
 # Streamlit app
 st.title('Rainfall to Watercourse Level Prediction')
 
+# File uploader for user to upload their own data
+uploaded_file = st.file_uploader("Upload your data in CSV format", type=["csv"])
+if uploaded_file is not None:
+    data = pd.read_csv(uploaded_file)
+    data['MonthDay'] = pd.to_datetime(data['MonthDay'], format='%Y%m%d')
+else:
+    # Provided dataset
+    data = pd.DataFrame({
+        'MonthDay': [20150425, 20150426, 20150427, 20150428, 20150429, 20150430, 20150501, 20150502, 20150503, 20150504, 20150505, 20150506, 20150507],
+        'SumRainfall': [0, 0, 0, 0, 1, 77, 126, 0, 3, 0, 0, 0, 0],
+        'AvgWatercourseLevel': [0.464, 0.439, 0.411, 0.395, 0.382, 0.670, 1.958, 1.701, 1.661, 1.582, 1.504, 1.432, 1.363],
+        'DeltaWatercourseLevel': [0.005, -0.025, -0.028, -0.017, -0.013, 0.288, 1.287, -0.256, -0.041, -0.079, -0.078, -0.072, -0.069]
+    })
+    data['MonthDay'] = pd.to_datetime(data['MonthDay'], format='%Y%m%d')
+
 # Provided dataset
 data = pd.DataFrame({
     'MonthDay': [20150425, 20150426, 20150427, 20150428, 20150429, 20150430, 20150501, 20150502, 20150503, 20150504, 20150505, 20150506, 20150507],
