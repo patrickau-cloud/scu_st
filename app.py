@@ -49,7 +49,7 @@ if not os.path.exists(lstm_model_file):
 st.title('Rainfall to Watercourse Level Prediction')
 
 # File uploader for user to upload their own data
-uploaded_file = st.file_uploader("Upload your data in CSV or Excel format", type=["csv", "xlsx"])
+uploaded_file = st.file_uploader("Upload your data in CSV or Excel format, download and refer the sample data structure first", type=["csv", "xlsx"])
 if uploaded_file is not None:
     if uploaded_file.name.endswith('.csv'):
         data = pd.read_csv(uploaded_file)
