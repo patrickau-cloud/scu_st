@@ -65,6 +65,11 @@ st.write(data)
 # Dropdown for model selection
 model_name = st.selectbox('Choose a model', (cnn_model_file, lstm_model_file))
 
+# Display image and subtitle if LSTM model is selected
+if model_name == lstm_model_file:
+    st.write("### Model Explained")
+    st.image("https://miro.medium.com/v2/resize:fit:828/format:webp/0*TdorpFVz6jsrewO7.png")
+
 # Button to run the chart generation
 if st.button('Run Chart'):
     # Load the model
