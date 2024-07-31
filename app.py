@@ -47,7 +47,7 @@ if not os.path.exists(lstm_model_file):
 
 # Streamlit app
 st.title('Rainfall to Watercourse Level Prediction')
-
+st.text("by Y Fang (Patrick)")
 # File uploader for user to upload their own data
 uploaded_file = st.file_uploader("Upload your data in CSV or Excel format, download and refer the sample data structure first", type=["csv", "xlsx"])
 if uploaded_file is not None:
