@@ -57,13 +57,16 @@ if st.button('Run Chart'):
     model = load_model(model_name)
     
     if model:
-        # Example dataset (you should replace this with your actual dataset)
+        # Provided dataset
         data = pd.DataFrame({
-            'MonthDay': pd.date_range(start='2015-04-01', end='2015-05-31'),
-            'SumRainfall': np.random.uniform(0, 200, size=61),
-            'DeltaWatercourseLevel': np.random.uniform(-0.5, 1.5, size=61)
+            'MonthDay': [20150425, 20150426, 20150427, 20150428, 20150429, 20150430, 20150501, 20150502, 20150503, 20150504, 20150505, 20150506, 20150507],
+            'SumRainfall': [0, 0, 0, 0, 1, 77, 126, 0, 3, 0, 0, 0, 0],
+            'AvgWatercourseLevel': [0.464, 0.439, 0.411, 0.395, 0.382, 0.670, 1.958, 1.701, 1.661, 1.582, 1.504, 1.432, 1.363],
+            'DeltaWatercourseLevel': [0.005, -0.025, -0.028, -0.017, -0.013, 0.288, 1.287, -0.256, -0.041, -0.079, -0.078, -0.072, -0.069]
         })
-        
+
+        data['MonthDay'] = pd.to_datetime(data['MonthDay'], format='%Y%m%d')
+
         # Prepare the input data (example: SumRainfall level of 8)
         input_rainfall = np.array([[8]], dtype=np.float32)
         input_rainfall_reshaped = input_rainfall.reshape((input_rainfall.shape[0], 1, input_rainfall.shape[1]))
