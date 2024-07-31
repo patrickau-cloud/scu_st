@@ -67,13 +67,13 @@ else:
     data['MonthDay'] = pd.to_datetime(data['MonthDay'], format='%Y%m%d')
 
 
-# Display the DataFrame with limited rows and consistent width
-st.write("##### Input Data")
-st.dataframe(data, height=200)
-
 # Button to download sample data as Excel
 sample_data_url = "https://github.com/patrickau-cloud/scu_st/raw/main/sample_watercourse_rainfall.xlsx"
 st.markdown(f"[Download sample data as Excel]({sample_data_url})")
+
+# Display the DataFrame with limited rows and consistent width
+st.write("##### Input Data")
+st.dataframe(data, height=200)
 
 # Dropdown for model selection
 model_name = st.selectbox('Choose a model', (cnn_model_file, lstm_model_file))
