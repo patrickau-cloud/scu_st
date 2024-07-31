@@ -59,16 +59,11 @@ data = pd.DataFrame({
 data['MonthDay'] = pd.to_datetime(data['MonthDay'], format='%Y%m%d')
 
 # Display the DataFrame
-st.write("### Input Data")
-st.write(data)
+st.write("Input Data")
+st.dataframe(data, height=200)
 
 # Dropdown for model selection
 model_name = st.selectbox('Choose a model', (cnn_model_file, lstm_model_file))
-
-# Display image and subtitle if LSTM model is selected
-if model_name == lstm_model_file:
-    st.write("### Model Explained")
-    st.image("https://miro.medium.com/v2/resize:fit:828/format:webp/0*TdorpFVz6jsrewO7.png")
 
 # Button to run the chart generation
 if st.button('Run Chart'):
@@ -143,3 +138,8 @@ if st.button('Run Chart'):
             st.write(f"Running time: {running_time:.4f} seconds")
         except Exception as e:
             st.error(f"Error during prediction or plotting: {e}")
+
+# Display image and subtitle if LSTM model is selected
+if model_name == lstm_model_file:
+    st.write("##### Model Explained")
+    st.image("https://miro.medium.com/v2/resize:fit:828/format:webp/0*TdorpFVz6jsrewO7.png")
