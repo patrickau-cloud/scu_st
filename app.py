@@ -11,6 +11,9 @@ import matplotlib.dates as mdates
 # Set ggplot style
 plt.style.use('ggplot')
 
+# Set Streamlit to always use the light theme
+st.set_page_config(layout="centered", initial_sidebar_state="auto", theme="light")
+
 # Function to download the model
 def download_model(url, model_name):
     try:
@@ -58,8 +61,8 @@ data = pd.DataFrame({
 
 data['MonthDay'] = pd.to_datetime(data['MonthDay'], format='%Y%m%d')
 
-# Display the DataFrame
-st.write("Input Data")
+# Display the DataFrame with limited rows and consistent width
+st.write("##### Input Data")
 st.dataframe(data, height=200)
 
 # Dropdown for model selection
@@ -139,7 +142,11 @@ if st.button('Run Chart'):
         except Exception as e:
             st.error(f"Error during prediction or plotting: {e}")
 
-# Display image and subtitle if LSTM model is selected
+# Display image and subtitle if LSTM or CNN model is selected at the bottom
 if model_name == lstm_model_file:
     st.write("##### Model Explained")
     st.image("https://miro.medium.com/v2/resize:fit:828/format:webp/0*TdorpFVz6jsrewO7.png")
+
+elif model_name == cnn_model_file:
+    st.write("##### Model Explained")
+    st.image("https://miro.medium.com/v2/resize:fit:640/format:webp/1*D8nnl4_X4Hy7wrDaPSCtSA.png")
