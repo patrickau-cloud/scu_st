@@ -139,11 +139,11 @@ if st.button('Try Me'):
 
 # Display image and subtitle if LSTM or CNN model is selected at the bottom
 if model_name == lstm_model_file:
-    st.write("##### Model Explained")
+    st.write("##### Model Structure")
     st.image("https://tensorflow.backprop.fr/wp-content/uploads/2020/06/Capture-d%E2%80%99%C3%A9cran-2020-06-10-%C3%A0-15.45.36-1024x540.png")
 
 elif model_name == cnn_model_file:
-    st.write("##### Model Explained")
+    st.write("##### Model Structure")
     st.image("https://miro.medium.com/v2/resize:fit:2352/1*H3JzmYY38w-awkqA02rEMQ.png")
 
 # Data Source section
