@@ -12,7 +12,7 @@ import matplotlib.dates as mdates
 plt.style.use('ggplot')
 
 # Set Streamlit to always use the light theme
-st.set_page_config(layout="centered", initial_sidebar_state="auto", theme="light")
+st.set_page_config(theme="light")
 
 # Function to download the model
 def download_model(url, model_name):
