@@ -49,9 +49,12 @@ if not os.path.exists(lstm_model_file):
 st.title('Rainfall to Watercourse Level Prediction')
 
 # File uploader for user to upload their own data
-uploaded_file = st.file_uploader("Upload your data in CSV format", type=["csv"])
+uploaded_file = st.file_uploader("Upload your data in CSV or Excel format", type=["csv", "xlsx"])
 if uploaded_file is not None:
-    data = pd.read_csv(uploaded_file)
+    if uploaded_file.name.endswith('.csv'):
+        data = pd.read_csv(uploaded_file)
+    elif uploaded_file.name.endswith('.xlsx'):
+        data = pd.read_excel(uploaded_file)
     data['MonthDay'] = pd.to_datetime(data['MonthDay'], format='%Y%m%d')
 else:
     # Provided dataset
@@ -62,6 +65,7 @@ else:
         'DeltaWatercourseLevel': [0.005, -0.025, -0.028, -0.017, -0.013, 0.288, 1.287, -0.256, -0.041, -0.079, -0.078, -0.072, -0.069]
     })
     data['MonthDay'] = pd.to_datetime(data['MonthDay'], format='%Y%m%d')
+
 
 # Provided dataset
 data = pd.DataFrame({
