@@ -66,7 +66,7 @@ st.dataframe(data, height=200)
 model_name = st.selectbox('Choose a model', (cnn_model_file, lstm_model_file))
 
 # Button to run the chart generation
-if st.button('Run Chart'):
+if st.button('Try Me'):
     # Load the model
     model = load_model(model_name)
     
