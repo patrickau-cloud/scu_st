@@ -148,4 +148,4 @@ elif model_name == cnn_model_file:
 
 # Data Source section
 st.write("### Data Source")
-st.text("The data used for training model are retrieved from Australia Bureau of Meteorology, Water Data, Station Name: Nerang River at Glenhurst\nPeriod of data: 2013-01-01 to 2015-12-31, data availability interval: 1 hour, cleanse and pre-preprocessed\nhttp://www.bom.gov.au/waterdata/")
+st.text("The data used for training model are retrieved from Australia Bureau of Meteorology,\n Water Data, Station Name: Nerang River at Glenhurst\nPeriod of data: 2013-01-01 to 2015-12-31, \ndata availability interval: 1 hour, cleanse and pre-preprocessed\nhttp://www.bom.gov.au/waterdata/")
