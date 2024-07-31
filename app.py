@@ -11,9 +11,6 @@ import matplotlib.dates as mdates
 # Set ggplot style
 plt.style.use('ggplot')
 
-# Set Streamlit to always use the light theme
-st.set_page_config(theme="light")
-
 # Function to download the model
 def download_model(url, model_name):
     try:
