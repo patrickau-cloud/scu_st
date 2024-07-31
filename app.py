@@ -51,29 +51,33 @@ st.title('Rainfall to Watercourse Level Prediction')
 # Dropdown for model selection
 model_name = st.selectbox('Choose a model', (cnn_model_file, lstm_model_file))
 
+# Provided dataset
+data = pd.DataFrame({
+    'MonthDay': [20150425, 20150426, 20150427, 20150428, 20150429, 20150430, 20150501, 20150502, 20150503, 20150504, 20150505, 20150506, 20150507],
+    'SumRainfall': [0, 0, 0, 0, 1, 77, 126, 0, 3, 0, 0, 0, 0],
+    'AvgWatercourseLevel': [0.464, 0.439, 0.411, 0.395, 0.382, 0.670, 1.958, 1.701, 1.661, 1.582, 1.504, 1.432, 1.363],
+    'DeltaWatercourseLevel': [0.005, -0.025, -0.028, -0.017, -0.013, 0.288, 1.287, -0.256, -0.041, -0.079, -0.078, -0.072, -0.069]
+})
+
+data['MonthDay'] = pd.to_datetime(data['MonthDay'], format='%Y%m%d')
+
+# Display the table and allow user interaction
+st.write("### Input Data")
+editable_data = st.data_editor(data)
+
 # Button to run the chart generation
 if st.button('Run Chart'):
     # Load the model
     model = load_model(model_name)
     
     if model:
-        # Provided dataset
-        data = pd.DataFrame({
-            'MonthDay': [20150425, 20150426, 20150427, 20150428, 20150429, 20150430, 20150501, 20150502, 20150503, 20150504, 20150505, 20150506, 20150507],
-            'SumRainfall': [0, 0, 0, 0, 1, 77, 126, 0, 3, 0, 0, 0, 0],
-            'AvgWatercourseLevel': [0.464, 0.439, 0.411, 0.395, 0.382, 0.670, 1.958, 1.701, 1.661, 1.582, 1.504, 1.432, 1.363],
-            'DeltaWatercourseLevel': [0.005, -0.025, -0.028, -0.017, -0.013, 0.288, 1.287, -0.256, -0.041, -0.079, -0.078, -0.072, -0.069]
-        })
-
-        data['MonthDay'] = pd.to_datetime(data['MonthDay'], format='%Y%m%d')
-
-        # Prepare the input data (example: SumRainfall level of 8)
-        input_rainfall = np.array([[8]], dtype=np.float32)
-        input_rainfall_reshaped = input_rainfall.reshape((input_rainfall.shape[0], 1, input_rainfall.shape[1]))
-
-        # Make a prediction
-        start_time = time.time()
         try:
+            # Prepare the input data (example: SumRainfall level of 8)
+            input_rainfall = np.array([[8]], dtype=np.float32)
+            input_rainfall_reshaped = input_rainfall.reshape((input_rainfall.shape[0], 1, input_rainfall.shape[1]))
+
+            # Make a prediction
+            start_time = time.time()
             predicted = model.predict(input_rainfall_reshaped)
             running_time = time.time() - start_time
 
@@ -82,8 +86,8 @@ if st.button('Run Chart'):
             # Filter data for a specific period
             start_date = '2015-04-25'
             end_date = '2015-05-07'
-            mask = (data['MonthDay'] >= start_date) & (data['MonthDay'] <= end_date)
-            filtered_data = data.loc[mask]
+            mask = (editable_data['MonthDay'] >= start_date) & (editable_data['MonthDay'] <= end_date)
+            filtered_data = editable_data.loc[mask]
 
             # Prepare the input data for prediction
             X = filtered_data[['SumRainfall']].values
