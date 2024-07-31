@@ -48,9 +48,6 @@ if not os.path.exists(lstm_model_file):
 # Streamlit app
 st.title('Rainfall to Watercourse Level Prediction')
 
-# Dropdown for model selection
-model_name = st.selectbox('Choose a model', (cnn_model_file, lstm_model_file))
-
 # Provided dataset
 data = pd.DataFrame({
     'MonthDay': [20150425, 20150426, 20150427, 20150428, 20150429, 20150430, 20150501, 20150502, 20150503, 20150504, 20150505, 20150506, 20150507],
@@ -61,9 +58,12 @@ data = pd.DataFrame({
 
 data['MonthDay'] = pd.to_datetime(data['MonthDay'], format='%Y%m%d')
 
-# Display the table and allow user interaction
+# Display the DataFrame
 st.write("### Input Data")
-editable_data = st.data_editor(data)
+st.write(data)
+
+# Dropdown for model selection
+model_name = st.selectbox('Choose a model', (cnn_model_file, lstm_model_file))
 
 # Button to run the chart generation
 if st.button('Run Chart'):
@@ -86,8 +86,8 @@ if st.button('Run Chart'):
             # Filter data for a specific period
             start_date = '2015-04-25'
             end_date = '2015-05-07'
-            mask = (editable_data['MonthDay'] >= start_date) & (editable_data['MonthDay'] <= end_date)
-            filtered_data = editable_data.loc[mask]
+            mask = (data['MonthDay'] >= start_date) & (data['MonthDay'] <= end_date)
+            filtered_data = data.loc[mask]
 
             # Prepare the input data for prediction
             X = filtered_data[['SumRainfall']].values
