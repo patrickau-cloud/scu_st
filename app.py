@@ -71,6 +71,17 @@ else:
 st.write("##### Input Data")
 st.dataframe(data, height=200)
 
+# Button to download the data as Excel
+def to_excel(df):
+    output = io.BytesIO()
+    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+    df.to_excel(writer, index=False, sheet_name='Sheet1')
+    writer.save()
+    processed_data = output.getvalue()
+    return processed_data
+
+st.download_button(label="Download sample data as Excel", data=to_excel(data), file_name='data.xlsx', mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
 # Dropdown for model selection
 model_name = st.selectbox('Choose a model', (cnn_model_file, lstm_model_file))
 
