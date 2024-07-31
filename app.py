@@ -146,4 +146,4 @@ if model_name == lstm_model_file:
 
 elif model_name == cnn_model_file:
     st.write("##### Model Explained")
-    st.image("https://miro.medium.com/v2/resize:fit:640/format:webp/1*D8nnl4_X4Hy7wrDaPSCtSA.png")
+    st.image("https://miro.medium.com/v2/resize:fit:2352/1*H3JzmYY38w-awkqA02rEMQ.png")
