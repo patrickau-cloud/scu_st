@@ -91,38 +91,25 @@ if st.button('Try Me'):
     
     if model:
         try:
-            # Prepare the input data (example: SumRainfall level of 8)
-            input_rainfall = np.array([[8]], dtype=np.float32)
-            input_rainfall_reshaped = input_rainfall.reshape((input_rainfall.shape[0], 1, input_rainfall.shape[1]))
-
-            # Make a prediction
-            start_time = time.time()
-            predicted = model.predict(input_rainfall_reshaped)
-            running_time = time.time() - start_time
-
-            st.write(f'Predicted Delta Watercourse Level: {predicted[0][0]}')
-
-            # Filter data for a specific period
-            start_date = '2015-04-25'
-            end_date = '2015-05-07'
-            mask = (data['MonthDay'] >= start_date) & (data['MonthDay'] <= end_date)
-            filtered_data = data.loc[mask]
-
             # Prepare the input data for prediction
-            X = filtered_data[['SumRainfall']].values
+            X = data[['SumRainfall']].values
             X_reshaped = X.reshape((X.shape[0], 1, X.shape[1]))
 
             # Predict the watercourse delta
+            start_time = time.time()
             predicted_deltas = model.predict(X_reshaped)
+            running_time = time.time() - start_time
+
+            st.write(f"Running time: {running_time:.4f} seconds")
 
             # Add the predictions to the dataframe
-            filtered_data['PredictedDelta'] = predicted_deltas
+            data['PredictedDelta'] = predicted_deltas
 
             # Plot the results
             fig, ax1 = plt.subplots()
 
             # Plot the rainfall as bars
-            ax1.bar(filtered_data['MonthDay'], filtered_data['SumRainfall'], color='b', alpha=0.6, label='Rainfall (mm)')
+            ax1.bar(data['MonthDay'], data['SumRainfall'], color='b', alpha=0.6, label='Rainfall (mm)')
             ax1.set_xlabel('Date')
             ax1.set_ylabel('Rainfall (mm)', color='b')
             ax1.tick_params(axis='y', labelcolor='b')
@@ -135,8 +122,8 @@ if st.button('Try Me'):
 
             # Create a second y-axis for the predicted delta watercourse level
             ax2 = ax1.twinx()
-            ax2.plot(filtered_data['MonthDay'], filtered_data['PredictedDelta'], color='r', label='Predicted Delta Watercourse Level')
-            ax2.plot(filtered_data['MonthDay'], filtered_data['DeltaWatercourseLevel'], color='g', linestyle='--', label='Actual Delta Watercourse Level')
+            ax2.plot(data['MonthDay'], data['PredictedDelta'], color='r', label='Predicted Delta Watercourse Level')
+            ax2.plot(data['MonthDay'], data['DeltaWatercourseLevel'], color='g', linestyle='--', label='Actual Delta Watercourse Level')
             ax2.set_ylabel('Delta Watercourse Level (m)', color='r')
             ax2.tick_params(axis='y', labelcolor='r')
             ax2.grid(False)  # Disable grid for ax2
@@ -148,13 +135,11 @@ if st.button('Try Me'):
             plt.setp(ax1.get_xticklabels(), rotation=45, ha='right')
 
             # Title and show plot
-            plt.title('Rainfall and Predicted Delta Watercourse Level (2015-04-25 to 2015-05-07)')
+            plt.title('Rainfall and Predicted Delta Watercourse Level')
             plt.tight_layout()
 
             st.pyplot(fig)
             
-            # Display running time
-            st.write(f"Running time: {running_time:.4f} seconds")
         except Exception as e:
             st.error(f"Error during prediction or plotting: {e}")
 
