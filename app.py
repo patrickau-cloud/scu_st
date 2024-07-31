@@ -67,8 +67,6 @@ else:
     data['MonthDay'] = pd.to_datetime(data['MonthDay'], format='%Y%m%d')
 
 
-data['MonthDay'] = pd.to_datetime(data['MonthDay'], format='%Y%m%d')
-
 # Display the DataFrame with limited rows and consistent width
 st.write("##### Input Data")
 st.dataframe(data, height=200)
