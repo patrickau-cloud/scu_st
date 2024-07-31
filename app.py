@@ -145,3 +145,7 @@ if model_name == lstm_model_file:
 elif model_name == cnn_model_file:
     st.write("##### Model Explained")
     st.image("https://miro.medium.com/v2/resize:fit:2352/1*H3JzmYY38w-awkqA02rEMQ.png")
+
+# Data Source section
+st.write("### Data Source")
+st.text("The data used for training model are retrieved from Australia Bureau of Meteorology, Water Data, Station Name: Nerang River at Glenhurst\nPeriod of data: 2013-01-01 to 2015-12-31, data availability interval: 1 hour, cleanse and pre-preprocessed\nhttp://www.bom.gov.au/waterdata/")
